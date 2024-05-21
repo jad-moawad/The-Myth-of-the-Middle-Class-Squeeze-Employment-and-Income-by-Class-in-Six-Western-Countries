@@ -1,0 +1,38 @@
+################################################################################################################# Authors: Jad Moawad & Daniel Oesch##### Project: The Myth of the Middle Class Squeeze: Employment and Income by Class in Six Western Countries, 1980-2020##### Data: 	Luxembourg Income Study (LIS)############################################################################################################
+# 2. Stacking data, employment rates by gender               
+ get_stack <- function(datasets, varp, varh, subset) {               
+
+# READ DATASETS                                          
+library(dplyr)       
+library(readstata13)      
+library(forcats)                 
+                         
+pp <- read.LIS(paste(datasets, 'p', sep = ''), labels = F, vars = varp, subset = subset)               
+hh <- read.LIS(paste(datasets, 'h', sep = ''), labels = F, vars = varh)               
+df <- merge(pp, hh, by = c("dname", "hid"))               
+return(df)               
+}               
+#------------------------------ RUN SCRIPTS -----------------------------               
+   
+#Household variables             
+varh <- c('hid','did','dname','hilabour','dhi','year','nhhmem','hwgt')  
+             
+# Resondents variable               varp <- c('hid', 'dname', 'age', 'sex', 'relation', 'occb1','status1','occ1_c','educ','educ_c')               subset <- 'age >= 25 & age <= 60'              
+               
+datasets=c('us78','us79','us80','us81','us82','us83','us84','us85','us86','us87','us88','us89','us90','us91','us92','us93','us94','us95','us96','us97','us98','us99','us00','us01','us02','us03','us04','us05','us06','us07','us08','us09','us10','us11','us12','us13','us14','us15','us16','us17','us18','fr96','fr97','fr98','fr99','fr00','fr01','fr02','fr03','fr04','fr05','fr06','fr07','fr08','fr09','fr10','fr11','fr12','fr13','fr14','fr15','fr16','fr17','fr18','de84','de85','de86','de87','de88','de89','de90','de91','de92','de93','de94','de95','de96','de97','de98','de99','de00','de01','de02','de03','de04','de05','de06','de07','de08','de09','de10','de11','de12','de13','de14','de15','de16','de17','de18','es80','es90','es93','es94','es95','es96','es97','es98','es99','es00','es04','es05','es06','es07','es08','es09','es10','es11','es12','es13','es14','es15','es16','es17','es18','pl99','pl04','pl05','pl06','pl07','pl08','pl09','pl10','pl11','pl12','pl13','pl14','pl15','pl16','pl17','pl18','uk94','uk95','uk96','uk97','uk98','uk99','uk00','uk01','uk02','uk03','uk04','uk05','uk06','uk07','uk08','uk09','uk10','uk11','uk12','uk13','uk14','uk15','uk16','uk17','uk18','at94','at95','at96','at97','at98','at99','at00','at03','at04','at05','at06','at07','at08','at09','at10','at11','at12','at13','at14','at15','at16','at17','at18','dk92','dk00','dk04','dk07','dk10','dk13','dk16','dk18','fi87','fi91','fi95','fi00','fi04','fi07','fi10','fi13','fi16','nl90','nl93','nl99','nl04','nl07','nl10','nl13','nl15','nl16','nl17','nl18','ie94','ie95','ie96','ie00','ie02','ie03','ie04','ie05','ie06','ie07','ie08','ie09','ie10','ie11','ie12','ie13','ie14','ie15','ie16','ie17','ie18','ch92','ch00','ch02','ch06','ch07','ch08','ch09','ch10','ch11','ch12','ch13','ch14','ch15','ch16','ch17','ch18')               
+                
+               
+df <- get_stack(datasets, varp, varh, subset)               
+               
+df$cntry = df$dname              
+              
+df$cntry=fct_collapse(df$cntry,US=c('us78','us79','us80','us81','us82','us83','us84','us85','us86','us87','us88','us89','us90','us91','us92','us93','us94','us95','us96','us97','us98','us99','us00','us01','us02','us03','us04','us05','us06','us07','us08','us09','us10','us11','us12','us13','us14','us15','us16','us17','us18'),FR=c('fr96','fr97','fr98','fr99','fr00','fr01','fr02','fr03','fr04','fr05','fr06','fr07','fr08','fr09','fr10','fr11','fr12','fr13','fr14','fr15','fr16','fr17','fr18'),DE=c('de84','de85','de86','de87','de88','de89','de90','de91','de92','de93','de94','de95','de96','de97','de98','de99','de00','de01','de02','de03','de04','de05','de06','de07','de08','de09','de10','de11','de12','de13','de14','de15','de16','de17','de18'),ES=c('es80','es90','es93','es94','es95','es96','es97','es98','es99','es00','es04','es05','es06','es07','es08','es09','es10','es11','es12','es13','es14','es15','es16','es17','es18'),PL=c('pl99','pl04','pl05','pl06','pl07','pl08','pl09','pl10','pl11','pl12','pl13','pl14','pl15','pl16','pl17','pl18'),UK=c('uk94','uk95','uk96','uk97','uk98','uk99','uk00','uk01','uk02','uk03','uk04','uk05','uk06','uk07','uk08','uk09','uk10','uk11','uk12','uk13','uk14','uk15','uk16','uk17','uk18'),AT=c('at94','at95','at96','at97','at98','at99','at00','at03','at04','at05','at06','at07','at08','at09','at10','at11','at12','at13','at14','at15','at16','at17','at18'),DK=c('dk92','dk00','dk04','dk07','dk10','dk13','dk16','dk18'),FI=c('fi87','fi91','fi95','fi00','fi04','fi07','fi10','fi13','fi16'),NL=c('nl90','nl93','nl99','nl04','nl07','nl10','nl13','nl15','nl16','nl17','nl18'),IE=c('ie94','ie95','ie96','ie00','ie02','ie03','ie04','ie05','ie06','ie07','ie08','ie09','ie10','ie11','ie12','ie13','ie14','ie15','ie16','ie17','ie18'),CH=c('ch92','ch00','ch02','ch06','ch07','ch08','ch09','ch10','ch11','ch12','ch13','ch14','ch15','ch16','ch17','ch18'))                 
+                            
+# Construct the file path for saving the dataset
+# save.dta13(df,paste(USR_DIR,"/path/to/your/directory", sep = ""), version = 117,convert.factors=TRUE)                      
+# df <-read.dta13(paste(USR_DIR, "/path/to/your/directory", sep=""),convert.factors=TRUE)   
+
+# Example - Construct the file path for saving the dataset
+save.dta13(df,paste(USR_DIR,"/jmoawa/data.dta", sep = ""), version = 117,convert.factors=TRUE)                      
+df <-read.dta13(paste(USR_DIR, "/jmoawa/data.dta", sep=""),convert.factors=TRUE)   
+
